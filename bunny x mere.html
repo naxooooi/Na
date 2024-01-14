@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon site Web avec des images</title>
+    <style>
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ajoutez la propriété background avec l'image et le flou à l'arrière-plan */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('https://hh.hh-content.com/pictures/gallery/6/2200x/63d4217a34c3f6f2b813e92982fece66.jpg') center/cover no-repeat;
+            filter: blur(5px); /* Ajustez la valeur de flou selon vos préférences */
+    
+        }
+       
+         
+        .container {
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .content {
+            height: 300px;
+            background-color: #f0f0f0;
+        }
+
+        .image-container {
+            overflow-x: auto;
+        }
+
+        .scroll-container {
+            max-height: 600px;
+            overflow-y: auto;
+            
+        }
+
+        .image-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .fivestar-image {
+            width: 300px;
+            height: 500px;
+            cursor: pointer;
+        }
+        .threestar-image {
+            width: 200px;
+            height: 500px;
+            cursor: pointer;
+
+        }
+        .mythic-image {
+            width: 200px;
+            height: 400px;
+            cursor: pointer;
+        }
+        #categoryDropdown {
+            background: transparent;
+            color: #333; /* Couleur du texte */
+            padding: 5px; /* Ajoutez un espacement pour un meilleur aspect visuel */
+        }
+
+
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        #modal img {
+            margin: auto;
+            display: block;
+            width: 60%;
+            max-width: 700px;
+            cursor: zoom-in;
+        }
+
+        #modalImg {
+            transition: transform 0.25s ease;
+        }
+
+        #prevButton, #nextButton {
+        position: absolute;
+        font-size: 18px;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        color: white;
+        top: 900px;
+        
+    }
+
+    #prevButton {
+        left: 200px;
+        top: 900px; /* Ajustez cette valeur pour déplacer vers le bas */
+    }
+
+    #nextButton {
+        right: 200px;
+        top: 900px; /* Ajustez cette valeur pour déplacer vers le bas */
+    }
+
+        .category-divider {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color:rgb(0, 0, 0);
+            bottom: 0;
+
+        }
+    </style>
+    <script>
+        // Informations sur les images
+        var imageInfo = {
+            bunny: [
+                
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava0-1200x.webp", 
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava3-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava4-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1/ava5-1200x.webp", //6e image
+
+                
+                "https://hhimages.d34d.workers.dev/pictures/girls/34/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/34/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/34/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/34/ava3-1200x.webp", //10e image
+                
+                "https://hhimages.d34d.workers.dev/pictures/girls/72/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/72/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/72/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/72/ava3-1200x.webp", //14e image
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava3-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava4-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/1961491/ava5-1200x.webp", //20e image
+        
+                "https://hhimages.d34d.workers.dev/pictures/girls/102212292/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/102212292/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/102212292/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/102212292/ava3-1200x.webp", //24e images
+            
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava3-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava4-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava5-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/948443498/ava6-1200x.webp", //31e image
+
+                "https://hh.hh-content.com/pictures/girls/614251920/ava0-1200x.webp",
+                "https://hh.hh-content.com/pictures/girls/614251920/ava1-1200x.webp",
+                "https://hh.hh-content.com/pictures/girls/614251920/ava2-1200x.webp",
+                "https://hh.hh-content.com/pictures/girls/614251920/ava3-1200x.webp",
+                "https://hh.hh-content.com/pictures/girls/614251920/ava4-1200x.webp",
+                "https://hh.hh-content.com/pictures/girls/614251920/ava5-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava3-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava4-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/721058035/ava5-1200x.webp",
+
+
+
+            ],
+            mere_bunny: [
+                "https://hhimages.d34d.workers.dev/pictures/girls/75/ava0-1200x.webp", //0
+                "https://hhimages.d34d.workers.dev/pictures/girls/75/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/75/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/75/ava3-1200x.webp", 
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/149/ava0-1200x.webp", 
+                "https://hhimages.d34d.workers.dev/pictures/girls/149/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/149/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/149/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/6144314/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6144314/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6144314/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6144314/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/601493685/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/601493685/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/601493685/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/601493685/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/797015676/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/797015676/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/797015676/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/797015676/ava3-1200x.webp",
+
+
+                
+
+            ], 
+            soeur_bunny: [
+                "https://hhimages.d34d.workers.dev/pictures/girls/74/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/74/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/74/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/74/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/148/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/148/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/148/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/148/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/6244300/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6244300/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6244300/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/6244300/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/517209429/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/517209429/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/517209429/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/517209429/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/942665434/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/942665434/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/942665434/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/942665434/ava3-1200x.webp",
+
+                "https://hhimages.d34d.workers.dev/pictures/girls/202241657/ava0-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/202241657/ava1-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/202241657/ava2-1200x.webp",
+                "https://hhimages.d34d.workers.dev/pictures/girls/202241657/ava3-1200x.webp",
+
+                
+
+            ],
+            matcha: [
+            "https://hh.hh-content.com/pictures/girls/312634530/ava0-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/312634530/ava1-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/312634530/ava2-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/312634530/ava3-1200x.webp",
+
+            "https://hh.hh-content.com/pictures/girls/834507213/ava0-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/834507213/ava1-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/834507213/ava2-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/834507213/ava3-1200x.webp",
+
+            "https://hh.hh-content.com/pictures/girls/270574600/ava0-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava1-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava2-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava3-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava4-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava5-1200x.webp",
+            "https://hh.hh-content.com/pictures/girls/270574600/ava6-1200x.webp",
+
+
+            ]
+            // Ajoutez d'autres catégories avec leurs URL correspondantes
+           
+        };
+
+        function openModal(category, index) {
+            selectedCategory = category;
+            currentImageIndex = index;
+            updateModalImage();
+            document.getElementById('modal').style.display = "block";
+        }
+        function closeModal(event) {
+    // Vérifiez si l'élément cliqué est l'arrière-plan (modal)
+    if (event.target.id === 'modal') {
+        document.getElementById('modal').style.display = "none";
+    }
+}
+        function showNextImage() {
+            currentImageIndex = (currentImageIndex + 1) % imageInfo[selectedCategory].length;
+            updateModalImage();
+        }
+
+        function showPreviousImage() {
+            currentImageIndex = (currentImageIndex - 1 + imageInfo[selectedCategory].length) % imageInfo[selectedCategory].length;
+            updateModalImage();
+        }
+        function updateModalImage() {
+            var imageUrl = imageInfo[selectedCategory][currentImageIndex];
+            document.getElementById('modalImg').src = imageUrl;
+            document.getElementById('modalImg').style.transform = "scale(1)";
+        }
+
+        function changeCategory() {
+            var selectedCategory = document.getElementById("categoryDropdown").value;
+            var imageContainer = document.getElementById("images-container");
+            
+            // Effacez le contenu actuel du conteneur d'images
+            imageContainer.innerHTML = "";
+
+
+            // Chargez les images de la catégorie sélectionnée
+            loadImages(selectedCategory);
+        }
+
+        function loadImages(category) {
+            var imageNames = imageInfo[category];
+
+            // Ajoutez la première rangée d'images au conteneur
+            var imagesContainer = document.getElementById("images-container");
+            var firstImageRow = document.createElement("div");
+            firstImageRow.className = "image-row";
+            imagesContainer.appendChild(firstImageRow);
+
+            
+
+            // Ajoutez uniquement les images de la première rangée
+            if (category === "bunny") {
+                imageNames.slice(0, 6).forEach(function (imageUrl, index) {
+                var imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.alt = category;
+                imgElement.className = "fivestar-image";
+
+                imgElement.onclick = function() {
+                    openModal(category, index);
+                };
+                firstImageRow.appendChild(imgElement);
+            })};
+            if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(31, 35).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 31); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+
+            // Si la catégorie est "Bunny", ajoutez la 2e rangée avec les images spécifiées
+            if (category === "bunny") {
+                var secondImageRow = document.createElement("div");
+                secondImageRow.className = "image-row";
+                imagesContainer.appendChild(secondImageRow);
+
+                imageNames.slice(6, 10).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 6); // Ajoutez 6 à l'index pour correspondre aux nouvelles images
+                    };
+                    secondImageRow.appendChild(imgElement);
+                });
+            }
+            
+           
+            
+
+            // Ajoutez une 3e rangée pour la catégorie "Bunny"
+            if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(10, 14).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 10); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+            // 4e rangée pour Bunny
+            if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(14, 20).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "fivestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 14); // Ajoutez 14 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            } // 5e rangée pour Bunny
+            if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(20, 24).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 20); // Ajoutez 20 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+
+                //6e rangée
+            } if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(24, 31).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "mythic-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 26); // Ajoutez 30 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+             if (category === "bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(37, 43).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "fivestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 35); // Ajoutez 30 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+if (category === "mere_bunny") {
+                imageNames.slice(0, 4).forEach(function (imageUrl, index) {
+                var imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.alt = category;
+                imgElement.className = "threestar-image";
+
+                imgElement.onclick = function() {
+                    openModal(category, index);
+                };
+                firstImageRow.appendChild(imgElement);
+            })};
+
+            if (category === "mere_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(4, 8).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 4); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+
+            // Si la catégorie est "Bunny", ajoutez la 2e rangée avec les images spécifiées
+            if (category === "mere_bunny") {
+                var secondImageRow = document.createElement("div");
+                secondImageRow.className = "image-row";
+                imagesContainer.appendChild(secondImageRow);
+
+                imageNames.slice(8, 12).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 8); // Ajoutez 6 à l'index pour correspondre aux nouvelles images
+                    };
+                    secondImageRow.appendChild(imgElement);
+                });
+            }
+            
+
+            // Ajoutez une 3e rangée pour la catégorie "Bunny"
+            if (category === "mere_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(12, 16).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 12); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+            // 4e rangée pour Bunny
+            if (category === "mere_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(16, 20).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 16); // Ajoutez 14 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            } // 5e rangée pour Bunny
+           
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            if (category === "soeur_bunny") {
+                imageNames.slice(0, 4).forEach(function (imageUrl, index) {
+                var imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.alt = category;
+                imgElement.className = "threestar-image";
+
+                imgElement.onclick = function() {
+                    openModal(category, index);
+                };
+                firstImageRow.appendChild(imgElement);
+            })};
+
+            if (category === "soeur_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(4, 8).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 4); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+
+            // Si la catégorie est "Bunny", ajoutez la 2e rangée avec les images spécifiées
+            if (category === "soeur_bunny") {
+                var secondImageRow = document.createElement("div");
+                secondImageRow.className = "image-row";
+                imagesContainer.appendChild(secondImageRow);
+
+                imageNames.slice(8, 12).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 8); // Ajoutez 6 à l'index pour correspondre aux nouvelles images
+                    };
+                    secondImageRow.appendChild(imgElement);
+                });
+            }
+            
+
+            // Ajoutez une 3e rangée pour la catégorie "Bunny"
+            if (category === "soeur_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(12, 16).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 12); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+            // 4e rangée pour Bunny
+            if (category === "soeur_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(16, 20).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 16); // Ajoutez 14 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            } // 5e rangée pour Bunny
+            if (category === "soeur_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(20, 24).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 20); // Ajoutez 20 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+
+                //6e rangée
+            } if (category === "soeur_bunny") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(24, 31).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "mythic-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 26); // Ajoutez 30 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+if (category === "matcha") {
+                imageNames.slice(0, 4).forEach(function (imageUrl, index) {
+                var imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.alt = category;
+                imgElement.className = "threestar-image";
+
+                imgElement.onclick = function() {
+                    openModal(category, index);
+                };
+                firstImageRow.appendChild(imgElement);
+            })};
+
+            if (category === "matcha") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(4, 8).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 4); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+
+            // Si la catégorie est "Bunny", ajoutez la 2e rangée avec les images spécifiées
+            if (category === "matcha") {
+                var secondImageRow = document.createElement("div");
+                secondImageRow.className = "image-row";
+                imagesContainer.appendChild(secondImageRow);
+
+                imageNames.slice(8, 15).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "mythic-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 8); // Ajoutez 6 à l'index pour correspondre aux nouvelles images
+                    };
+                    secondImageRow.appendChild(imgElement);
+                });
+            }
+            
+
+            // Ajoutez une 3e rangée pour la catégorie "Bunny"
+            if (category === "matcha") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(12, 16).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 12); // Ajoutez 10 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            }
+            // 4e rangée pour Bunny
+            if (category === "matcha") {
+                var thirdImageRow = document.createElement("div");
+                thirdImageRow.className = "image-row";
+                imagesContainer.appendChild(thirdImageRow);
+
+                imageNames.slice(16, 20).forEach(function (imageUrl, index) {
+                    var imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = category;
+                    imgElement.className = "threestar-image";
+                
+
+                    imgElement.onclick = function() {
+                        openModal(category, index + 16); // Ajoutez 14 à l'index pour correspondre aux nouvelles images
+                    };
+                    thirdImageRow.appendChild(imgElement);
+                });
+            } // 5e rangée pour Bunny
+           
+            
+          
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    changeCategory(); // Appeler changeCategory() lors du chargement de la page
+
+    // Ajouter un gestionnaire d'événements au body pour fermer la modal
+    document.body.addEventListener('click', function (event) {
+        closeModal(event);
+    });
+
+    // Ajouter un gestionnaire d'événements pour le contextmenu (clic droit)
+    document.getElementById('modal').addEventListener('contextmenu', function (event) {
+        zoomOut(event);
+        event.preventDefault(); // Empêcher le menu contextuel du navigateur de s'afficher
+    });
+});
+
+    </script>
+</head>
+<body>
+    
+    <div id="modal" onclick="closeModal()" oncontextmenu="zoomOut(event); return false;">
+        <button class="modal-buttons" id="prevButton" onclick="showPreviousImage()">Précédent</button>
+        <img id="modalImg" style="width:100%" onclick="zoomIn(event)">
+        <button class="modal-buttons" id="nextButton" onclick="showNextImage()">Suivant</button>
+</div>    
+    
+
+    <select id="categoryDropdown" onchange="changeCategory()">
+        <option value="bunny">Bunny</option>
+        <option value="mere_bunny">Mère de Bunny</option>
+        <option value="soeur_bunny">Petite Soeur de Bunny</option>
+        <option value="matcha">Matcha</option>
+        <!-- Ajoutez d'autres options pour chaque catégorie -->
+    </select>
+
+    <div id="images-container" class="scroll-container image-container">
+    
+        <!-- Le contenu des images sera ajouté ici dynamiquement -->
+    </div>
+
+</body>
+</html>
